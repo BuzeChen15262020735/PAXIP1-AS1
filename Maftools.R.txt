@@ -1,0 +1,58 @@
+#if (!require("BiocManager"))
+#    install.packages("BiocManager")
+#BiocManager::install("maftools")
+
+library(data.table)
+
+
+library(maftools) 
+setwd("F:\\YYYwork\\maftools") 
+
+dir.path <- "F:/YYYwork/maftools/Masked_Somatic_Mutation"
+
+# 获取所有maf文件路径
+"all.maf <- list.files(path = dir.path, pattern = "".gz"", "
+"                      full.names = T, recursive = T)"
+
+"maf.list <- lapply(all.maf, data.table::fread, "
+"                   sep = ""\t"", "
+"                   header = T,"
+                   skip = 7 
+)
+
+"maf.merge <- do.call(rbind,maf.list)"
+dim(maf.merge)
+
+
+"maf.merge$Tumor_Sample_Barcode <- substr(maf.merge$Tumor_Sample_Barcode,1,16)"
+
+"write.table(maf.merge, file=""F:/YYYwork/49.maftools/maf.merge.txt"", sep=""\t"", quote=F, row.names=F)"
+
+library(data.table)
+
+
+library(maftools)
+setwd("F:\\YYYwork\\49.maftools")  
+"tmp=read.table('new_low_out.txt', header=T, sep=""\t"", check.names=F)"
+
+geneNum=10 
+"geneMut=read.table(""geneMut.txt"", header=T, sep=""\t"", check.names=F, row.names=1)"
+gene=row.names(geneMut)[1:geneNum]
+
+
+ann_colors=list()
+"col=c(""blue"", ""red"")"
+"names(col)=c(""low"", ""high"")"
+ann_colors[["Risk"]]=col
+
+
+"pdf(file=""low.pdf"", width=6, height=6)"
+"maf=read.maf(maf='new_low_out.txt', clinicalData=""ann-low2.txt"")"
+"oncoplot(maf=maf, clinicalFeatures=""Risk"", genes=gene, annotationColor=ann_colors, keepGeneOrder=T)"
+dev.off()
+
+
+"pdf(file=""high.pdf"", width=6, height=6)"
+"maf=read.maf(maf=""new_low_out.txt"", clinicalData=""ann-high2.txt"")"
+"oncoplot(maf=maf, clinicalFeatures=""Risk"", genes=gene, annotationColor=ann_colors, keepGeneOrder=T)"
+dev.off()

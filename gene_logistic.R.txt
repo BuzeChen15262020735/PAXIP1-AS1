@@ -1,0 +1,46 @@
+
+data <- dat
+data <- read.table("~/file.txt", header = T)
+head(data[, -1])
+#        expr T.stage N.stage M.stage
+# 1  6.395299      T3      N1      M0
+# 2 12.270018      T3      N2    <NA>
+# 3  6.297991      T3      N0      M0
+# 4  6.954923      T3      N0      M0
+# 5  6.317630      T2      N0      M0
+# 6  5.479180      T3      N0    <NA>
+data$group <- ifelse(data$expr >= data$expr, "High", "Low")
+data$group <- factor(data$group, levels = c("Low", "High"))
+
+
+fit <- glm(data = data, formula = T.stage ~ group, family = 'binomial')
+summary(fit)
+# Call:
+#   glm(formula = T.stage ~ group, family = "binomial", data = data)
+# 
+# Deviance Residuals: 
+#   Min       1Q   Median       3Q      Max  
+# -3.2411   0.1025   0.1025   0.2068   0.2068  
+# 
+# Coefficients:
+#             Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)   3.8341     0.5054   7.587 3.29e-14 ***
+# groupHigh     1.4130     1.1228   1.258    0.208    
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# (Dispersion parameter for binomial family taken to be 1)
+# 
+# Null deviance: 53.241  on 379  degrees of freedom
+# Residual deviance: 51.258  on 378  degrees of freedom
+# (34 observations deleted due to missingness)
+# AIC: 55.258
+# 
+# Number of Fisher Scoring iterations: 8
+exp(coef(fit)) ## OR
+exp(confint(fit)) ## CI
+
+
+
+
+
